@@ -3,110 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de Protocolos · INTERNO</title>
+    <title>URE-SP · Controle de Protocolos · Unidade Regional de Ensino Caieiras</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
         :root {
-            --azul-escuro: #0a2f6c;
-            --azul-claro: #eef3fb;
-            --azul-medio: #133d7a;
-            --azul-dark-bg: #041a3a;
-            --vermelho: #d32f2f;
-            --vermelho-escuro: #8b0000;
-            --dourado: #ffec9e;
+            --azul-profundo: #0b2447;
+            --azul-escuro: #19376d;
+            --azul-medio: #2a5298;
+            --azul-claro: #e8f0fe;
+            --azul-accent: #4a90d9;
+            --verde-edu: #1b7a3d;
+            --verde-claro: #e6f5ec;
+            --vermelho: #c62828;
+            --vermelho-claro: #fdecea;
+            --amarelo-prio: #f9a825;
+            --dourado: #f5c842;
             --branco: #ffffff;
-            --preto: #212121;
-            --cinza-borda: #e0e4e9;
-            --cinza-claro: #f0f4fa;
-            --status-recebido: #1976d2;
-            --status-analise: #f9a825;
-            --status-concluido: #2e7d32;
-            --card-radius: 32px;
-            --btn-radius: 40px;
-            --input-radius: 40px;
+            --preto: #1a1a2e;
+            --cinza: #6b7280;
+            --cinza-borda: #dce1e8;
+            --cinza-fundo: #f3f5f9;
+            --card-radius: 24px;
+            --btn-radius: 50px;
+            --input-radius: 14px;
+            --sombra: 0 4px 24px rgba(11,36,71,0.10);
+            --sombra-forte: 0 12px 40px rgba(11,36,71,0.18);
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(145deg, #0a2f6c 0%, #041a3a 100%);
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--cinza-fundo);
             min-height: 100vh;
             color: var(--preto);
-            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
-        /* ==================== LOGIN SCREEN ==================== */
+        /* ==================== SCROLLBAR ==================== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--cinza-borda); border-radius: 3px; }
+
+        /* ==================== LOGIN ==================== */
         #login-screen {
-            position: fixed;
-            inset: 0;
+            position: fixed; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(160deg, var(--azul-profundo) 0%, #0a1628 60%, #06101e 100%);
+            z-index: 1000;
+            transition: opacity .5s ease, visibility .5s ease;
+        }
+        #login-screen.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+        #login-screen::before {
+            content: '';
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 80%, rgba(74,144,217,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(245,200,66,0.06) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .login-wrapper {
+            position: relative;
             display: flex;
             align-items: center;
-            justify-content: center;
-            background: linear-gradient(145deg, #0a2f6c 0%, #041a3a 100%);
-            z-index: 1000;
-            transition: opacity .4s ease, visibility .4s ease;
+            gap: 60px;
+            max-width: 900px;
+            padding: 20px;
         }
-        #login-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-
+        .login-branding {
+            flex: 1;
+            color: white;
+            animation: brandIn .7s ease forwards;
+        }
+        @keyframes brandIn {
+            from { opacity:0; transform: translateX(-20px); }
+            to   { opacity:1; transform: translateX(0); }
+        }
+        .login-branding .gov-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 6px 16px;
+            border-radius: var(--btn-radius);
+            font-size: 0.75rem;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 24px;
+        }
+        .login-branding .gov-badge .dot {
+            width: 6px; height: 6px;
+            background: var(--verde-edu);
+            border-radius: 50%;
+        }
+        .login-branding h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 12px;
+        }
+        .login-branding h1 span { color: var(--dourado); }
+        .login-branding p {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.55);
+            line-height: 1.6;
+            max-width: 360px;
+        }
+        .login-branding .logo-img {
+            margin-top: 32px;
+            height: 60px;
+            width: auto;
+            border-radius: 12px;
+            background: white;
+            padding: 6px 12px;
+        }
         .login-card {
+            width: 420px;
+            min-width: 380px;
             background: var(--branco);
             border-radius: var(--card-radius);
-            padding: 48px 40px;
-            width: 440px;
-            max-width: 92vw;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-            animation: loginEnter .5s ease forwards;
-            text-align: center;
+            padding: 40px 36px;
+            box-shadow: var(--sombra-forte);
+            animation: cardIn .6s ease forwards;
         }
-        @keyframes loginEnter {
-            from { opacity: 0; transform: translateY(20px) scale(.97); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        @keyframes cardIn {
+            from { opacity:0; transform: translateY(16px) scale(.98); }
+            to   { opacity:1; transform: translateY(0) scale(1); }
         }
-        .login-card img {
-            max-height: 80px;
-            width: auto;
-            margin-bottom: 16px;
-            border-radius: 16px;
-            padding: 6px;
-            background: var(--cinza-claro);
-        }
-        .login-card h1 {
-            font-size: 1.4rem;
+        .login-card h2 {
+            font-size: 1.3rem;
             font-weight: 700;
-            color: var(--azul-escuro);
+            color: var(--azul-profundo);
             margin-bottom: 4px;
         }
-        .login-card .subtitle {
-            font-size: 0.85rem;
-            color: #666;
+        .login-card .lc-sub {
+            font-size: 0.82rem;
+            color: var(--cinza);
             margin-bottom: 28px;
         }
-        .form-group { margin-bottom: 18px; text-align: left; }
+        .form-group { margin-bottom: 18px; }
         .form-group label {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 600;
             color: var(--azul-escuro);
             margin-bottom: 6px;
-            padding-left: 14px;
+            text-transform: uppercase;
+            letter-spacing: .04em;
         }
         .form-group select,
         .form-group input,
         .form-group textarea {
             width: 100%;
-            padding: 12px 18px;
+            padding: 12px 16px;
             border-radius: var(--input-radius);
-            border: 1px solid var(--cinza-borda);
-            font-family: 'Inter', sans-serif;
+            border: 1.5px solid var(--cinza-borda);
+            font-family: inherit;
             font-size: 0.9rem;
             color: var(--preto);
             background: var(--branco);
@@ -116,311 +179,299 @@
         .form-group select:focus,
         .form-group input:focus,
         .form-group textarea:focus {
-            border-color: var(--azul-escuro);
-            box-shadow: 0 0 0 3px rgba(10,47,108,0.1);
+            border-color: var(--azul-accent);
+            box-shadow: 0 0 0 3px rgba(74,144,217,0.12);
         }
-        .form-group textarea { border-radius: 20px; resize: vertical; min-height: 80px; }
-
-        .login-error {
-            font-size: 0.85rem;
-            color: var(--vermelho);
-            min-height: 20px;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-        .login-footer {
-            margin-top: 20px;
-            font-size: 0.75rem;
-            color: #999;
-        }
+        .form-group textarea { border-radius: 16px; resize:vertical; min-height: 90px; }
+        .login-error { font-size: 0.82rem; color: var(--vermelho); min-height: 20px; margin-bottom: 4px; text-align: center; }
 
         /* ==================== BUTTONS ==================== */
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: linear-gradient(135deg, var(--azul-escuro), #052050);
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 28px;
             border: none;
-            padding: 10px 24px;
             border-radius: var(--btn-radius);
-            color: var(--branco);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
+            font-family: inherit;
+            font-size: 0.88rem;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.1s linear;
+            transition: all .15s ease;
+            text-decoration: none;
         }
-        .btn:active { transform: translateY(2px); }
-        .btn:hover { filter: brightness(1.15); }
+        .btn:active { transform: translateY(1px); }
         .btn-primary {
-            background: linear-gradient(135deg, var(--azul-escuro), #052050);
+            background: linear-gradient(135deg, var(--azul-profundo), var(--azul-escuro));
+            color: white;
             width: 100%;
             padding: 14px;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 16px rgba(11,36,71,0.25);
         }
-        .btn-danger { background: linear-gradient(135deg, #b71c1c, var(--vermelho-escuro)); }
-        .btn-success { background: linear-gradient(135deg, #1e7e34, #145c24); }
-        .btn-warning { background: linear-gradient(135deg, #e65100, #bf360c); }
+        .btn-primary:hover { box-shadow: 0 6px 24px rgba(11,36,71,0.35); }
+        .btn-azul { background: linear-gradient(135deg, var(--azul-profundo), var(--azul-escuro)); color: white; }
+        .btn-verde { background: linear-gradient(135deg, #1b7a3d, #145c2b); color: white; }
+        .btn-vermelho { background: linear-gradient(135deg, #c62828, #8e1b1b); color: white; }
         .btn-outline {
             background: transparent;
             border: 2px solid var(--azul-escuro);
             color: var(--azul-escuro);
         }
-        .btn-outline:hover {
-            background: var(--azul-escuro);
-            color: var(--branco);
+        .btn-outline:hover { background: var(--azul-escuro); color: white; }
+        .btn-sm { padding: 7px 18px; font-size: 0.8rem; }
+        .btn-ghost {
+            background: rgba(11,36,71,0.06);
+            color: var(--azul-escuro);
         }
-        .btn-sm { padding: 6px 16px; font-size: 0.78rem; }
-        .btn-logout {
-            background: var(--vermelho);
-            border: none;
-            padding: 5px 14px;
-            border-radius: var(--btn-radius);
-            color: white;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.8rem;
-        }
-        .btn-logout:hover { filter: brightness(1.2); }
+        .btn-ghost:hover { background: rgba(11,36,71,0.12); }
 
-        /* ==================== MAIN APP LAYOUT ==================== */
-        #app-container {
-            display: none;
-            min-height: 100vh;
-            padding: 20px;
-        }
+        /* ==================== APP CONTAINER ==================== */
+        #app-container { display:none; min-height:100vh; }
         #app-container.visible { display: block; }
 
-        .dashboard-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: #0f1a24;
-            border-radius: 48px;
-            padding: 20px;
-            box-shadow: 0 30px 35px rgba(0,0,0,0.5), inset 0 1px 4px rgba(255,255,200,0.1);
-            border: 1px solid var(--vermelho);
-            position: relative;
-        }
-
-        /* ==================== HEADER ==================== */
-        .header {
+        /* ==================== TOP BAR ==================== */
+        .topbar {
+            background: var(--branco);
+            border-bottom: 1px solid var(--cinza-borda);
+            padding: 0 32px;
+            height: 68px;
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            background: rgba(10,47,108,0.8);
-            backdrop-filter: blur(4px);
-            padding: 12px 24px;
-            border-radius: 60px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
+            position: sticky; top: 0; z-index: 50;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.04);
         }
-        .logo-area { display: flex; align-items: center; gap: 12px; }
-        .logo-area img {
-            max-height: 50px;
-            width: auto;
+        .topbar-left { display: flex; align-items: center; gap: 16px; }
+        .topbar-logo {
+            display: flex; align-items: center; gap: 10px;
+        }
+        .topbar-logo img {
+            height: 42px; width: auto;
+            border-radius: 10px;
             background: white;
-            border-radius: 12px;
-            padding: 4px;
+            padding: 3px;
         }
-        .logo-area span {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--dourado);
+        .topbar-logo .logo-text {
+            display: flex; flex-direction: column;
         }
-        .user-info {
-            background: rgba(10,47,108,0.6);
-            padding: 6px 18px;
-            border-radius: 40px;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.85rem;
-        }
-        .user-info .dept-badge {
-            background: var(--dourado);
-            color: var(--azul-escuro);
-            padding: 3px 12px;
-            border-radius: 40px;
-            font-size: 0.75rem;
+        .topbar-logo .logo-text strong {
+            font-size: 0.95rem;
+            color: var(--azul-profundo);
             font-weight: 700;
+            line-height: 1.2;
         }
-
-        /* ==================== NAV TABS ==================== */
-        .nav-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            padding: 0 8px;
+        .topbar-logo .logo-text small {
+            font-size: 0.68rem;
+            color: var(--cinza);
+            text-transform: uppercase;
+            letter-spacing: .06em;
         }
-        .nav-tab {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 10px 20px;
+        .topbar-right {
+            display: flex; align-items: center; gap: 12px;
+        }
+        .topbar-dept {
+            background: var(--azul-claro);
+            color: var(--azul-profundo);
+            padding: 5px 16px;
             border-radius: var(--btn-radius);
-            color: rgba(255,255,255,0.6);
-            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .topbar-user {
             font-size: 0.85rem;
+            color: var(--cinza);
+        }
+        .btn-sair {
+            background: var(--vermelho-claro);
+            color: var(--vermelho);
+            border: none;
+            padding: 6px 16px;
+            border-radius: var(--btn-radius);
+            font-family: inherit;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .15s;
+        }
+        .btn-sair:hover { background: var(--vermelho); color: white; }
+
+        /* ==================== PAGE LAYOUT ==================== */
+        .page { padding: 28px 32px 48px; max-width: 1400px; margin: 0 auto; }
+
+        /* ==================== NAV PILLS ==================== */
+        .nav-pills {
+            display: flex; gap: 6px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+        .nav-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 20px;
+            border: 1.5px solid var(--cinza-borda);
+            border-radius: var(--btn-radius);
+            background: var(--branco);
+            color: var(--cinza);
+            font-family: inherit;
+            font-size: 0.84rem;
             font-weight: 500;
             cursor: pointer;
             transition: all .2s;
         }
-        .nav-tab:hover {
-            background: rgba(255,255,255,0.12);
-            color: rgba(255,255,255,0.9);
-        }
-        .nav-tab.active {
-            background: var(--azul-escuro);
-            border-color: var(--dourado);
-            color: var(--dourado);
+        .nav-pill:hover { border-color: var(--azul-medio); color: var(--azul-escuro); }
+        .nav-pill.active {
+            background: var(--azul-profundo);
+            border-color: var(--azul-profundo);
+            color: white;
             font-weight: 600;
+            box-shadow: 0 2px 12px rgba(11,36,71,0.2);
         }
-        .nav-tab .tab-icon { font-size: 1rem; }
+        .nav-pill .pill-icon { font-size: 1.05rem; }
 
         /* ==================== CARDS ==================== */
         .card {
             background: var(--branco);
             border-radius: var(--card-radius);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            border: 1px solid var(--cinza-borda);
-            animation: cardIn .4s ease forwards;
-        }
-        @keyframes cardIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .card h2 {
-            color: var(--azul-escuro);
-            border-left: 4px solid var(--vermelho);
-            padding-left: 1rem;
-            margin-bottom: 1.2rem;
-            font-size: 1.5rem;
-        }
-        .card h3 {
-            color: var(--azul-escuro);
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-        }
-
-        /* ==================== STATS GRID ==================== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
+            padding: 28px;
             margin-bottom: 24px;
+            box-shadow: var(--sombra);
+            border: 1px solid var(--cinza-borda);
         }
-        .stat-card {
-            background: linear-gradient(135deg, var(--azul-escuro), #052050);
-            border-radius: 24px;
-            padding: 24px;
-            text-align: center;
-            color: white;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            opacity: 0;
-            animation: fadeUp .5s ease forwards;
-        }
-        .stat-card:nth-child(1) { animation-delay: .05s; }
-        .stat-card:nth-child(2) { animation-delay: .1s; }
-        .stat-card:nth-child(3) { animation-delay: .15s; }
-        .stat-card:nth-child(4) { animation-delay: .2s; }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(16px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .stat-card .stat-icon { font-size: 2rem; margin-bottom: 8px; }
-        .stat-card .stat-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: .08em;
-            opacity: 0.7;
-            margin-bottom: 6px;
-        }
-        .stat-card .stat-value {
-            font-size: 2.4rem;
-            font-weight: 700;
-        }
-        .stat-card.gold { background: linear-gradient(135deg, #b8860b, #8b6914); }
-        .stat-card.red { background: linear-gradient(135deg, var(--vermelho), var(--vermelho-escuro)); }
-        .stat-card.green { background: linear-gradient(135deg, #2e7d32, #1b5e20); }
-        .stat-card.amber { background: linear-gradient(135deg, #e65100, #bf360c); }
-
-        /* ==================== TABLE ==================== */
-        .table-container {
-            overflow-x: auto;
-        }
-        .table-header {
+        .card-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
             gap: 12px;
         }
-        .table-filters {
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--azul-profundo);
             display: flex;
-            gap: 8px;
             align-items: center;
-            flex-wrap: wrap;
+            gap: 10px;
         }
-        .table-filters input,
-        .table-filters select {
-            padding: 8px 16px;
-            border-radius: var(--input-radius);
-            border: 1px solid var(--cinza-borda);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.82rem;
+        .card-title .title-icon {
+            width: 36px; height: 36px;
+            background: var(--azul-claro);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        .card-title .title-bar {
+            width: 4px;
+            height: 24px;
+            background: var(--vermelho);
+            border-radius: 2px;
+        }
+
+        /* ==================== STATS ==================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .stat-card {
             background: var(--branco);
-            outline: none;
-            min-width: 140px;
-        }
-        .table-filters input:focus,
-        .table-filters select:focus {
-            border-color: var(--azul-escuro);
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
+            border-radius: 20px;
+            padding: 22px 24px;
+            box-shadow: var(--sombra);
             border: 1px solid var(--cinza-borda);
-            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            opacity: 0;
+            animation: statIn .5s ease forwards;
+        }
+        .stat-card:nth-child(1) { animation-delay: .04s; }
+        .stat-card:nth-child(2) { animation-delay: .08s; }
+        .stat-card:nth-child(3) { animation-delay: .12s; }
+        .stat-card:nth-child(4) { animation-delay: .16s; }
+        @keyframes statIn {
+            from { opacity:0; transform: translateY(12px); }
+            to   { opacity:1; transform: translateY(0); }
+        }
+        .stat-icon-box {
+            width: 52px; height: 52px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .stat-icon-box.blue  { background: var(--azul-claro); }
+        .stat-icon-box.amber { background: #fff3e0; }
+        .stat-icon-box.green { background: var(--verde-claro); }
+        .stat-icon-box.gold  { background: #fef9e7; }
+        .stat-info .stat-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--cinza);
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .stat-info .stat-value {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: var(--azul-profundo);
+            line-height: 1;
+        }
+
+        /* ==================== TABLES ==================== */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th {
             text-align: left;
-            font-size: 0.85rem;
+            padding: 12px 16px;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--cinza);
+            font-weight: 600;
+            border-bottom: 2px solid var(--cinza-borda);
             white-space: nowrap;
         }
-        th {
-            background: var(--azul-escuro);
-            color: white;
-            font-weight: 600;
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: .04em;
+        td {
+            padding: 14px 16px;
+            font-size: 0.88rem;
+            border-bottom: 1px solid #f0f2f5;
+            color: #444;
+            vertical-align: middle;
         }
-        tr.data-row { cursor: pointer; transition: background .15s; }
-        tr.data-row:hover { background: var(--cinza-claro); }
-        td .protocol-num {
+        tr.data-row { cursor: pointer; transition: background .12s; }
+        tr.data-row:hover { background: #f8f9fb; }
+        td .proto-num {
             font-weight: 700;
-            color: var(--azul-escuro);
+            color: var(--azul-profundo);
             font-size: 0.85rem;
+            letter-spacing: .02em;
         }
+        td .prio-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: var(--btn-radius);
+        }
+        td .prio-badge.urgente { background: var(--vermelho-claro); color: var(--vermelho); }
+        td .prio-badge.normal  { background: var(--azul-claro); color: var(--azul-medio); }
+        td .prio-badge.baixa   { background: #f5f5f5; color: #888; }
 
         /* ==================== STATUS BADGE ==================== */
         .status-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 14px;
+            padding: 5px 14px;
             border-radius: var(--btn-radius);
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             font-weight: 600;
             white-space: nowrap;
         }
@@ -428,277 +479,290 @@
             width: 7px; height: 7px;
             border-radius: 50%;
         }
-        .status-badge.received {
-            background: #e3f2fd;
-            color: var(--status-recebido);
+        .status-badge.received    { background: var(--azul-claro); color: #1565c0; }
+        .status-badge.received .dot { background: #1565c0; }
+        .status-badge.in_analysis { background: #fff3e0; color: #e65100; }
+        .status-badge.in_analysis .dot { background: #e65100; }
+        .status-badge.completed   { background: var(--verde-claro); color: var(--verde-edu); }
+        .status-badge.completed .dot { background: var(--verde-edu); }
+
+        /* ==================== TABLE FILTERS ==================== */
+        .table-filters {
+            display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
         }
-        .status-badge.received .dot { background: var(--status-recebido); }
-        .status-badge.in_analysis {
-            background: #fff8e1;
-            color: #e65100;
+        .table-filters input,
+        .table-filters select {
+            padding: 9px 16px;
+            border-radius: var(--input-radius);
+            border: 1.5px solid var(--cinza-borda);
+            font-family: inherit;
+            font-size: 0.82rem;
+            background: var(--branco);
+            color: var(--preto);
+            outline: none;
+            min-width: 150px;
+            transition: border-color .2s;
         }
-        .status-badge.in_analysis .dot { background: var(--status-analise); }
-        .status-badge.completed {
-            background: #e8f5e9;
-            color: var(--status-concluido);
+        .table-filters input:focus,
+        .table-filters select:focus {
+            border-color: var(--azul-accent);
         }
-        .status-badge.completed .dot { background: var(--status-concluido); }
 
         /* ==================== FORM ==================== */
-        .form-row {
+        .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 18px;
         }
+        .form-grid .full { grid-column: 1 / -1; }
         .form-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 12px;
-            flex-wrap: wrap;
+            display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap;
         }
-        .form-success {
+        .form-success-box {
             display: none;
             text-align: center;
-            padding: 32px;
+            padding: 40px;
         }
-        .form-success.visible { display: block; }
-        .form-success .proto-result {
+        .form-success-box.visible { display: block; }
+        .form-success-box .success-icon {
+            width: 72px; height: 72px;
+            background: var(--verde-claro);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             font-size: 2rem;
-            font-weight: 700;
-            color: var(--azul-escuro);
-            margin-bottom: 8px;
+            margin-bottom: 16px;
         }
-        .form-success .check-icon {
-            font-size: 3rem;
-            margin-bottom: 12px;
+        .form-success-box .proto-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--azul-profundo);
+            margin-bottom: 4px;
         }
-        .form-success p { color: #666; font-size: 0.9rem; }
+        .form-success-box p { color: var(--cinza); font-size: 0.9rem; }
 
         /* ==================== MODAL ==================== */
         .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.55);
-            backdrop-filter: blur(6px);
+            position: fixed; inset: 0;
+            background: rgba(11,36,71,0.45);
+            backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 100;
             opacity: 0;
             visibility: hidden;
-            transition: all .25s ease;
+            transition: all .25s;
             padding: 20px;
         }
         .modal-overlay.visible { opacity: 1; visibility: visible; }
         .modal {
             background: var(--branco);
             border-radius: var(--card-radius);
-            width: 680px;
+            width: 720px;
             max-width: 100%;
-            max-height: 90vh;
+            max-height: 92vh;
             overflow-y: auto;
-            transform: scale(.95) translateY(10px);
-            transition: transform .25s ease;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            transform: scale(.96) translateY(12px);
+            transition: transform .25s;
+            box-shadow: var(--sombra-forte);
         }
         .modal-overlay.visible .modal { transform: scale(1) translateY(0); }
-
         .modal-header {
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            padding: 24px 28px 20px;
-            border-bottom: 2px solid var(--azul-escuro);
+            padding: 28px 32px 20px;
+            border-bottom: 2px solid var(--azul-profundo);
         }
         .modal-header h2 {
-            color: var(--azul-escuro);
             font-size: 1.4rem;
             font-weight: 700;
-            border: none;
-            padding: 0;
-            margin: 0;
+            color: var(--azul-profundo);
         }
-        .modal-header .modal-sub { font-size: 0.8rem; color: #999; margin-top: 2px; }
-        .modal-header .close-btn {
-            background: var(--cinza-claro);
-            border: none;
+        .modal-header .m-sub {
+            font-size: 0.8rem;
+            color: var(--cinza);
+            margin-top: 2px;
+        }
+        .close-btn {
             width: 36px; height: 36px;
             border-radius: 50%;
+            border: none;
+            background: var(--cinza-fundo);
             font-size: 1.2rem;
-            color: #666;
+            color: var(--cinza);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all .2s;
         }
-        .modal-header .close-btn:hover { background: var(--vermelho); color: white; }
+        .close-btn:hover { background: var(--vermelho); color: white; }
+        .modal-body { padding: 24px 32px; }
 
-        .modal-body { padding: 24px 28px; }
-
-        /* Status Stepper */
-        .status-stepper {
+        /* Stepper */
+        .stepper {
             display: flex;
             align-items: center;
+            background: var(--cinza-fundo);
+            border-radius: 20px;
+            padding: 22px 24px;
             margin-bottom: 28px;
-            padding: 20px;
-            background: var(--cinza-claro);
-            border-radius: 24px;
         }
-        .step {
-            flex: 1;
-            text-align: center;
-        }
+        .step-item { flex:1; text-align:center; }
         .step-circle {
-            width: 40px; height: 40px;
+            width: 42px; height: 42px;
             border-radius: 50%;
             border: 3px solid var(--cinza-borda);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             font-weight: 700;
-            color: #aaa;
+            color: #bbb;
             background: white;
-            position: relative;
-            z-index: 1;
+            position: relative; z-index: 1;
             transition: all .3s;
         }
-        .step.active .step-circle {
-            border-color: var(--azul-escuro);
-            color: var(--branco);
-            background: var(--azul-escuro);
-            box-shadow: 0 4px 12px rgba(10,47,108,0.3);
-        }
-        .step.done .step-circle {
-            border-color: var(--status-concluido);
-            background: var(--status-concluido);
+        .step-item.done .step-circle {
+            border-color: var(--verde-edu);
+            background: var(--verde-edu);
             color: white;
+        }
+        .step-item.active .step-circle {
+            border-color: var(--azul-profundo);
+            background: var(--azul-profundo);
+            color: white;
+            box-shadow: 0 4px 12px rgba(11,36,71,0.25);
         }
         .step-label {
             display: block;
-            font-size: 0.72rem;
-            color: #aaa;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #bbb;
             margin-top: 8px;
             text-transform: uppercase;
             letter-spacing: .04em;
-            font-weight: 600;
         }
-        .step.active .step-label,
-        .step.done .step-label { color: var(--azul-escuro); }
-        .step-line {
-            flex: 1;
-            height: 3px;
+        .step-item.done .step-label,
+        .step-item.active .step-label { color: var(--azul-profundo); }
+        .step-connector {
+            flex: 1; height: 3px;
             background: var(--cinza-borda);
-            margin: 0 -4px;
+            margin: 0 -2px;
             position: relative;
-            top: -15px;
+            top: -14px;
         }
-        .step-line.done { background: var(--status-concluido); }
-        .step-line.active { background: linear-gradient(90deg, var(--status-concluido), var(--azul-escuro)); }
+        .step-connector.done { background: var(--verde-edu); }
+        .step-connector.active { background: linear-gradient(90deg, var(--verde-edu), var(--azul-profundo)); }
 
         /* Detail Grid */
         .detail-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 18px;
-            margin-bottom: 20px;
+            gap: 20px;
+            margin-bottom: 24px;
         }
         .detail-field label {
             display: block;
-            font-size: 0.72rem;
+            font-size: 0.7rem;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: .06em;
-            color: #999;
+            color: var(--cinza);
             margin-bottom: 4px;
-            font-weight: 600;
         }
-        .detail-field .value {
+        .detail-field .val {
             font-size: 0.95rem;
             color: var(--preto);
             font-weight: 500;
         }
-        .detail-description {
-            background: var(--cinza-claro);
-            border-radius: 20px;
-            padding: 16px 20px;
+        .detail-box {
+            background: var(--cinza-fundo);
+            border-radius: 16px;
+            padding: 18px 22px;
             font-size: 0.9rem;
             line-height: 1.7;
             color: #444;
             margin-bottom: 24px;
+            border-left: 4px solid var(--azul-accent);
         }
 
         /* History */
-        .history-item {
+        .hist-item {
             display: flex;
             gap: 14px;
             padding: 12px 0;
-            border-bottom: 1px solid var(--cinza-borda);
-            font-size: 0.85rem;
+            border-bottom: 1px solid #f0f2f5;
         }
-        .history-item:last-child { border-bottom: none; }
-        .history-dot {
+        .hist-item:last-child { border-bottom: none; }
+        .hist-dot {
             width: 10px; height: 10px;
             border-radius: 50%;
             margin-top: 5px;
             flex-shrink: 0;
         }
-        .history-info .action { color: var(--preto); font-weight: 500; }
-        .history-info .meta { font-size: 0.78rem; color: #999; margin-top: 2px; }
+        .hist-info .hist-action { color: var(--preto); font-weight: 500; font-size: 0.88rem; }
+        .hist-info .hist-meta { font-size: 0.76rem; color: var(--cinza); margin-top: 2px; }
 
-        /* Admin Fields */
-        .admin-field { display: none; margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--cinza-borda); }
-        .admin-field.visible { display: block; }
-
-        .modal-actions {
+        /* Admin panel */
+        .admin-panel {
+            display: none;
+            margin-top: 24px;
+            padding: 24px;
+            background: #f8f0f0;
+            border-radius: 16px;
+            border: 1.5px solid #e8d0d0;
+        }
+        .admin-panel.visible { display: block; }
+        .admin-panel h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--vermelho);
+            margin-bottom: 16px;
             display: flex;
-            gap: 10px;
-            padding: 16px 28px 24px;
-            border-top: 1px solid var(--cinza-borda);
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
         }
 
         /* ==================== TOAST ==================== */
         #toast-container {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 200;
-            display: flex;
-            flex-direction: column-reverse;
-            gap: 8px;
+            position: fixed; bottom: 24px; right: 24px; z-index: 200;
+            display: flex; flex-direction: column-reverse; gap: 8px;
         }
         .toast {
             background: var(--branco);
-            border-left: 4px solid var(--azul-escuro);
-            border-radius: 16px;
+            border-left: 4px solid var(--azul-profundo);
+            border-radius: 14px;
             padding: 14px 20px;
-            font-size: 0.85rem;
-            color: var(--preto);
+            font-size: 0.88rem;
             font-weight: 500;
+            color: var(--preto);
             min-width: 280px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            box-shadow: var(--sombra-forte);
             animation: toastIn .3s ease forwards;
         }
-        .toast.success { border-left-color: var(--status-concluido); }
-        .toast.error { border-left-color: var(--vermelho); }
+        .toast.success { border-left-color: var(--verde-edu); }
+        .toast.error   { border-left-color: var(--vermelho); }
         @keyframes toastIn {
-            from { opacity: 0; transform: translateX(30px); }
-            to { opacity: 1; transform: translateX(0); }
+            from { opacity:0; transform: translateX(24px); }
+            to   { opacity:1; transform: translateX(0); }
         }
         .toast.hiding { animation: toastOut .3s ease forwards; }
-        @keyframes toastOut { to { opacity: 0; transform: translateX(30px); } }
+        @keyframes toastOut { to { opacity:0; transform: translateX(24px); } }
 
         /* ==================== EMPTY STATE ==================== */
         .empty-state {
             text-align: center;
             padding: 48px 24px;
-            color: #999;
+            color: var(--cinza);
         }
-        .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: .4; }
+        .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: .35; }
         .empty-state p { font-size: 0.9rem; }
 
-        /* ==================== LOADING ==================== */
+        /* ==================== SPINNER ==================== */
         .spinner {
             display: inline-block;
             width: 18px; height: 18px;
@@ -709,84 +773,119 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ==================== VIEW MANAGEMENT ==================== */
+        /* ==================== VIEWS ==================== */
         .view { display: none; }
         .view.active { display: block; animation: viewIn .3s ease; }
         @keyframes viewIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity:0; transform: translateY(8px); }
+            to   { opacity:1; transform: translateY(0); }
         }
 
+        /* ==================== FOOTER ==================== */
+        .page-footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.72rem;
+            color: var(--cinza);
+            letter-spacing: .04em;
+        }
+        .page-footer a { color: var(--azul-accent); text-decoration: none; }
+
         /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 900px) {
+            .login-wrapper { flex-direction: column; gap: 32px; }
+            .login-branding { text-align: center; }
+            .login-branding p { max-width: 100%; }
+            .login-card { min-width: unset; width: 100%; }
+        }
         @media (max-width: 768px) {
-            .dashboard-container { padding: 12px; border-radius: 32px; }
-            .header { border-radius: 32px; padding: 10px 16px; }
-            .logo-area span { font-size: 0.95rem; }
-            .form-row { grid-template-columns: 1fr; }
+            .topbar { padding: 0 16px; height: 60px; }
+            .topbar-logo .logo-text small { display: none; }
+            .topbar-user { display: none; }
+            .page { padding: 20px 16px 40px; }
+            .form-grid { grid-template-columns: 1fr; }
             .detail-grid { grid-template-columns: 1fr; }
             .stats-grid { grid-template-columns: 1fr 1fr; }
-            .nav-tabs { gap: 6px; padding: 0 4px; }
-            .nav-tab { padding: 8px 14px; font-size: 0.78rem; }
-            .card { padding: 1.2rem; border-radius: 24px; }
+            .card { padding: 20px; border-radius: 20px; }
+            .nav-pill { padding: 8px 14px; font-size: 0.78rem; }
         }
         @media (max-width: 480px) {
             .stats-grid { grid-template-columns: 1fr; }
-            .dashboard-container { border-radius: 24px; padding: 8px; }
-            .table-filters input { min-width: 100px; }
+            .table-filters input { min-width: 120px; }
+            .login-branding h1 { font-size: 1.6rem; }
         }
     </style>
 </head>
 <body>
 
-<!-- ==================== LOGIN SCREEN ==================== -->
+<!-- ==================== LOGIN ==================== -->
 <div id="login-screen">
-    <div class="login-card">
-        <img src="https://i.ibb.co/0p01LzxB/logo3de.jpg" alt="Logo">
-        <h1>Controle de Protocolos</h1>
-        <p class="subtitle">INTERNO · Sistema de Registros</p>
+    <div class="login-wrapper">
+        <div class="login-branding">
+            <div class="gov-badge"><span class="dot"></span> Governo do Estado de São Paulo</div>
+            <h1>Unidade Regional Ensino<br>de <span>CAIEIRAS</span></h1>
+            <p>Sistema integrado de controle de protocolos e solicitações das unidades escolares e setores administrativos da região.</p>
+            <img class="logo-img" src="https://i.ibb.co/0p01LzxB/logo3de.jpg" alt="Logo URE">
+        </div>
+        <div class="login-card">
+            <h2>Acesso ao Sistema</h2>
+            <p class="lc-sub">Selecione seu setor e informe a senha</p>
 
-        <div class="form-group">
-            <label>Departamento</label>
-            <select id="login-dept">
-                <option value="">Selecione seu departamento</option>
-            </select>
+            <div class="form-group">
+                <label>Setor / Unidade Escolar</label>
+                <select id="login-dept"><option value="">Selecione...</option></select>
+            </div>
+            <div class="form-group">
+                <label>Senha de Acesso</label>
+                <input type="password" id="login-pass" placeholder="Informe sua senha" autocomplete="off">
+            </div>
+            <p class="login-error" id="login-error"></p>
+            <button class="btn btn-primary" id="login-btn" onclick="doLogin()">Entrar no Sistema</button>
+            <p style="margin-top:20px;font-size:0.72rem;color:#aaa;text-align:center">
+                URE-SP · Sistema de Protocolos v3.0
+            </p>
         </div>
-        <div class="form-group">
-            <label>Senha</label>
-            <input type="password" id="login-pass" placeholder="Digite sua senha" autocomplete="off">
-        </div>
-        <p class="login-error" id="login-error"></p>
-        <button class="btn btn-primary" id="login-btn" onclick="doLogin()">Entrar no Sistema</button>
-        <p class="login-footer">Sistema de Controle de Protocolos v2.0 · INTERNO</p>
     </div>
 </div>
 
 <!-- ==================== APP ==================== -->
 <div id="app-container">
-    <div class="dashboard-container">
 
-        <!-- Header -->
-        <div class="header">
-            <div class="logo-area">
+    <!-- Top Bar -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-logo">
                 <img src="https://i.ibb.co/0p01LzxB/logo3de.jpg" alt="Logo">
-                <span>Controle de Protocolos · INTERNO</span>
-            </div>
-            <div class="user-info">
-                <span class="dept-badge" id="user-dept-badge">—</span>
-                <span id="user-name-display">—</span>
-                <button class="btn-logout" onclick="doLogout()">Sair</button>
+                <div class="logo-text">
+                    <strong>URE-SP · Protocolos</strong>
+                    <small>Unidade Regional de Ensino Caieiras</small>
+                </div>
             </div>
         </div>
+        <div class="topbar-right">
+            <span class="topbar-dept" id="user-dept-badge">—</span>
+            <span class="topbar-user" id="user-name-display">—</span>
+            <button class="btn-sair" onclick="doLogout()">Sair</button>
+        </div>
+    </div>
 
-        <!-- Navigation Tabs -->
-        <div class="nav-tabs" id="nav-tabs"></div>
+    <!-- Page -->
+    <div class="page">
 
-        <!-- ==================== DASHBOARD VIEW ==================== -->
+        <!-- Nav -->
+        <div class="nav-pills" id="nav-pills"></div>
+
+        <!-- ========== DASHBOARD ========== -->
         <div class="view" id="view-dashboard">
             <div class="stats-grid" id="stats-grid"></div>
             <div class="card">
-                <h2>Protocolos Recentes</h2>
-                <div class="table-container">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="title-icon">📋</div>
+                        Últimos Protocolos
+                    </div>
+                </div>
+                <div class="table-wrap">
                     <table>
                         <thead>
                             <tr>
@@ -794,7 +893,8 @@
                                 <th>Data/Hora</th>
                                 <th>Origem</th>
                                 <th>Destino</th>
-                                <th>Solicitante</th>
+                                <th>Categoria</th>
+                                <th>Prioridade</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -804,77 +904,104 @@
             </div>
         </div>
 
-        <!-- ==================== NEW PROTOCOL VIEW ==================== -->
+        <!-- ========== NEW PROTOCOL ========== -->
         <div class="view" id="view-new">
             <div class="card">
-                <h2>Novo Protocolo de Solicitação</h2>
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="title-icon">✚</div>
+                        Registrar Nova Solicitação
+                    </div>
+                </div>
                 <form id="protocol-form" onsubmit="return createProtocol(event)">
-                    <div class="form-row">
+                    <div class="form-grid">
                         <div class="form-group">
-                            <label>Departamento de Origem</label>
+                            <label>Unidade / Setor de Origem</label>
                             <select id="f-origin" required></select>
                         </div>
                         <div class="form-group">
                             <label>Setor de Destino</label>
                             <select id="f-dest" required></select>
                         </div>
-                    </div>
-                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Categoria da Solicitação</label>
+                            <select id="f-category" required>
+                                <option value="">Selecione...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Prioridade</label>
+                            <select id="f-priority">
+                                <option value="normal">Normal</option>
+                                <option value="urgente">Urgente</option>
+                                <option value="baixa">Baixa</option>
+                            </select>
+                        </div>
                         <div class="form-group">
                             <label>Nome do Solicitante</label>
-                            <input type="text" id="f-requester" placeholder="Nome completo do solicitante" required>
+                            <input type="text" id="f-requester" placeholder="Nome completo" required>
                         </div>
                         <div class="form-group">
                             <label>Responsável pelo Andamento</label>
-                            <input type="text" id="f-assigned" placeholder="Nome do responsável">
+                            <input type="text" id="f-assigned" placeholder="Servidor responsável">
+                        </div>
+                        <div class="form-group full">
+                            <label>Descrição Detalhada da Solicitação</label>
+                            <textarea id="f-description" placeholder="Descreva a solicitação com todos os detalhes necessários..." required></textarea>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Descrição da Solicitação</label>
-                        <textarea id="f-description" placeholder="Descreva detalhadamente a solicitação..." required></textarea>
-                    </div>
                     <div class="form-actions">
-                        <button type="submit" class="btn" id="submit-btn">Registrar Protocolo</button>
-                        <button type="button" class="btn btn-outline" onclick="resetForm()">Limpar</button>
+                        <button type="submit" class="btn btn-azul" id="submit-btn">Registrar Protocolo</button>
+                        <button type="button" class="btn btn-ghost" onclick="resetForm()">Limpar Formulário</button>
                     </div>
                 </form>
-                <div class="form-success" id="form-success">
-                    <div class="check-icon">✅</div>
-                    <div class="proto-result" id="proto-result"></div>
-                    <p>Protocolo registrado com sucesso!</p>
-                    <button class="btn btn-sm" style="margin-top:16px" onclick="resetForm()">Registrar Novo</button>
+                <div class="form-success-box" id="form-success">
+                    <div class="success-icon">✓</div>
+                    <div class="proto-number" id="proto-result"></div>
+                    <p>Protocolo registrado com sucesso no sistema</p>
+                    <button class="btn btn-azul btn-sm" style="margin-top:18px" onclick="resetForm()">Registrar Novo</button>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== ALL PROTOCOLS VIEW ==================== -->
+        <!-- ========== ALL PROTOCOLS ========== -->
         <div class="view" id="view-all">
             <div class="card">
-                <h2>Todos os Protocolos</h2>
-                <div class="table-header">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="title-icon">☰</div>
+                        Consulta Geral de Protocolos
+                    </div>
                     <div class="table-filters">
-                        <input type="text" id="filter-search" placeholder="Buscar protocolo ou solicitante..." oninput="renderProtocolTable()">
-                        <select id="filter-status" onchange="renderProtocolTable()">
-                            <option value="">Todos os Status</option>
+                        <input type="text" id="filter-search" placeholder="Buscar protocolo, solicitante..." oninput="renderAllTable()">
+                        <select id="filter-status" onchange="renderAllTable()">
+                            <option value="">Todos Status</option>
                             <option value="received">Recebido</option>
                             <option value="in_analysis">Em Análise</option>
                             <option value="completed">Concluído</option>
                         </select>
-                        <select id="filter-dept" onchange="renderProtocolTable()">
-                            <option value="">Todos os Deptos</option>
+                        <select id="filter-dept" onchange="renderAllTable()">
+                            <option value="">Todos Setores</option>
+                        </select>
+                        <select id="filter-priority" onchange="renderAllTable()">
+                            <option value="">Prioridade</option>
+                            <option value="urgente">Urgente</option>
+                            <option value="normal">Normal</option>
+                            <option value="baixa">Baixa</option>
                         </select>
                     </div>
                 </div>
-                <div class="table-container">
+                <div class="table-wrap">
                     <table>
                         <thead>
                             <tr>
                                 <th>Protocolo</th>
-                                <th>Data/Hora</th>
+                                <th>Data</th>
                                 <th>Origem</th>
                                 <th>Destino</th>
+                                <th>Categoria</th>
                                 <th>Solicitante</th>
-                                <th>Responsável</th>
+                                <th>Prior.</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -884,12 +1011,15 @@
             </div>
         </div>
 
-        <!-- ==================== MY PROTOCOLS VIEW ==================== -->
+        <!-- ========== MY PROTOCOLS ========== -->
         <div class="view" id="view-mine">
             <div class="stats-grid" id="mine-stats"></div>
             <div class="card">
-                <h2>Meus Protocolos</h2>
-                <div class="table-header">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="title-icon">◉</div>
+                        Minhas Solicitações
+                    </div>
                     <div class="table-filters">
                         <input type="text" id="mine-search" placeholder="Buscar..." oninput="renderMyTable()">
                         <select id="mine-status" onchange="renderMyTable()">
@@ -900,14 +1030,15 @@
                         </select>
                     </div>
                 </div>
-                <div class="table-container">
+                <div class="table-wrap">
                     <table>
                         <thead>
                             <tr>
                                 <th>Protocolo</th>
                                 <th>Data</th>
                                 <th>Destino</th>
-                                <th>Solicitante</th>
+                                <th>Categoria</th>
+                                <th>Prior.</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -917,57 +1048,64 @@
             </div>
         </div>
 
+    </div><!-- /page -->
+
+    <div class="page-footer">
+        Sistema de Controle de Protocolos · Unidade Regional de Ensino Caieiras · v3.0
     </div>
 </div>
 
-<!-- ==================== DETAIL MODAL ==================== -->
+<!-- ==================== MODAL ==================== -->
 <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
     <div class="modal">
         <div class="modal-header">
             <div>
                 <h2 id="modal-title">—</h2>
-                <p class="modal-sub" id="modal-date">—</p>
+                <p class="m-sub" id="modal-date">—</p>
             </div>
             <button class="close-btn" onclick="closeModal()">&times;</button>
         </div>
         <div class="modal-body">
-            <div class="status-stepper" id="modal-stepper"></div>
+            <div class="stepper" id="modal-stepper"></div>
             <div class="detail-grid" id="modal-details"></div>
-            <div class="detail-description" id="modal-desc"></div>
+            <div class="detail-box" id="modal-desc"></div>
 
-            <div class="admin-field" id="admin-fields">
-                <h3 style="color:var(--vermelho);border-left:3px solid var(--vermelho);padding-left:12px;margin-bottom:16px;font-size:1.1rem">Painel Administrativo</h3>
-                <div class="form-group">
-                    <label>Alterar Status</label>
-                    <select id="m-status">
-                        <option value="received">Recebido</option>
-                        <option value="in_analysis">Em Análise</option>
-                        <option value="completed">Concluído</option>
-                    </select>
+            <div class="admin-panel" id="admin-fields">
+                <h3>⚙ Painel do Administrador</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Alterar Status</label>
+                        <select id="m-status">
+                            <option value="received">Recebido</option>
+                            <option value="in_analysis">Em Análise</option>
+                            <option value="completed">Concluído</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Responsável</label>
+                        <input type="text" id="m-assigned" placeholder="Nome do responsável">
+                    </div>
+                    <div class="form-group full">
+                        <label>Observações / Despacho</label>
+                        <textarea id="m-notes" placeholder="Registre observações, despachos ou encaminhamentos..."></textarea>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Responsável</label>
-                    <input type="text" id="m-assigned" placeholder="Nome do responsável">
-                </div>
-                <div class="form-group">
-                    <label>Observações</label>
-                    <textarea id="m-notes" placeholder="Adicione observações..." style="border-radius:20px"></textarea>
-                </div>
-                <button class="btn btn-success" style="margin-top:8px" onclick="updateProtocol()">Atualizar Protocolo</button>
+                <button class="btn btn-verde" style="margin-top:8px" onclick="updateProtocol()">Salvar Alterações</button>
             </div>
 
-            <h3 style="color:var(--azul-escuro);border-left:3px solid var(--azul-escuro);padding-left:12px;margin-top:24px;margin-bottom:12px;font-size:1.1rem">Histórico de Movimentações</h3>
+            <h3 style="color:var(--azul-profundo);font-size:1rem;font-weight:700;margin-top:28px;margin-bottom:14px;display:flex;align-items:center;gap:8px">
+                📜 Histórico de Movimentações
+            </h3>
             <div id="modal-history"></div>
         </div>
     </div>
 </div>
 
-<!-- Toast -->
 <div id="toast-container"></div>
 
 <script>
 // ============================================================
-//  CONFIG FIREBASE — Substitua pelos seus dados
+//  FIREBASE CONFIG — Substitua pelos seus dados
 // ============================================================
 const firebaseConfig = {
   apiKey: "AIzaSyDDFa806mskyEpigk8-q270A6r-tmKBEOU",
@@ -980,65 +1118,89 @@ const firebaseConfig = {
 };
 
 // ============================================================
-//  DEPARTAMENTOS
+//  SETORES / UNIDADES — Unidade Regional de Ensino Caieiras
 // ============================================================
 const DEPARTMENTS = [
-    { id: 'administracao',   name: 'Administração',              short: 'ADM' },
-    { id: 'financeiro',      name: 'Financeiro',                 short: 'FIN' },
-    { id: 'rh',              name: 'Recursos Humanos',           short: 'RH'  },
-    { id: 'juridico',        name: 'Jurídico',                   short: 'JUR' },
-    { id: 'compras',         name: 'Compras e Licitações',       short: 'COM' },
-    { id: 'ti',              name: 'Tecnologia da Informação',   short: 'TI'  },
-    { id: 'logistica',       name: 'Logística e Almoxarifado',   short: 'LOG' },
-    { id: 'marketing',       name: 'Marketing e Comunicação',    short: 'MKT' },
-    { id: 'operacoes',       name: 'Operações e Produção',       short: 'OPR' },
-    { id: 'contabilidade',   name: 'Contabilidade e Patrimônio', short: 'CTB' },
-    { id: 'seguranca',       name: 'Segurança e Portaria',       short: 'SEG' },
-    { id: 'atendimento',     name: 'Atendimento ao Público',     short: 'ATD' },
+    { id: 'diretoria',          name: 'Diretoria Regional',              short: 'DIR' },
+    { id: 'supervisao',         name: 'Supervisão Escolar',              short: 'SUP' },
+    { id: 'gestao-escolar',     name: 'Apoio à Gestão Escolar',         short: 'AGE' },
+    { id: 'pedagogia',          name: 'Coordenadoria Pedagógica',        short: 'PED' },
+    { id: 'rh',                 name: 'Recursos Humanos / Pessoal',      short: 'RH'  },
+    { id: 'financeiro',         name: 'Financeiro e Contabilidade',       short: 'FIN' },
+    { id: 'infraestrutura',     name: 'Infraestrutura e Manutenção',     short: 'INF' },
+    { id: 'alimentacao',        name: 'Programa de Alimentação (PNAE)',  short: 'PAE' },
+    { id: 'transporte',         name: 'Transporte Escolar',              short: 'TRA' },
+    { id: 'ti',                 name: 'Tecnologia Educacional (TI)',     short: 'TI'  },
+    { id: 'juridico',           name: 'Jurídico e Licitações',           short: 'JUR' },
+    { id: 'protocolo-central',  name: 'Protocolo e Arquivo Central',     short: 'PTC' },
 ];
 
-const ADMIN_DEPT = { id: 'registros', name: 'Departamento de Registros', short: 'REG' };
+const ADMIN_DEPT = { id: 'registros', name: 'Sistema Central (Admin)', short: 'ADM' };
 
 const ACCOUNTS = {
-    'registros':     { ...ADMIN_DEPT, role: 'admin' },
-    'administracao': { ...DEPARTMENTS[0], role: 'department' },
-    'financeiro':    { ...DEPARTMENTS[1], role: 'department' },
-    'rh':            { ...DEPARTMENTS[2], role: 'department' },
-    'juridico':      { ...DEPARTMENTS[3], role: 'department' },
-    'compras':       { ...DEPARTMENTS[4], role: 'department' },
-    'ti':            { ...DEPARTMENTS[5], role: 'department' },
-    'logistica':     { ...DEPARTMENTS[6], role: 'department' },
-    'marketing':     { ...DEPARTMENTS[7], role: 'department' },
-    'operacoes':     { ...DEPARTMENTS[8], role: 'department' },
-    'contabilidade': { ...DEPARTMENTS[9], role: 'department' },
-    'seguranca':     { ...DEPARTMENTS[10], role: 'department' },
-    'atendimento':   { ...DEPARTMENTS[11], role: 'department' },
+    'registros':        { ...ADMIN_DEPT, role: 'admin' },
+    'diretoria':        { ...DEPARTMENTS[0],  role: 'department' },
+    'supervisao':       { ...DEPARTMENTS[1],  role: 'department' },
+    'gestao-escolar':   { ...DEPARTMENTS[2],  role: 'department' },
+    'pedagogia':        { ...DEPARTMENTS[3],  role: 'department' },
+    'rh':               { ...DEPARTMENTS[4],  role: 'department' },
+    'financeiro':       { ...DEPARTMENTS[5],  role: 'department' },
+    'infraestrutura':   { ...DEPARTMENTS[6],  role: 'department' },
+    'alimentacao':      { ...DEPARTMENTS[7],  role: 'department' },
+    'transporte':       { ...DEPARTMENTS[8],  role: 'department' },
+    'ti':               { ...DEPARTMENTS[9],  role: 'department' },
+    'juridico':         { ...DEPARTMENTS[10], role: 'department' },
+    'protocolo-central':{ ...DEPARTMENTS[11], role: 'department' },
 };
 
-const EMAIL_DOMAIN = 'registros.gov';
+const EMAIL_DOMAIN = 'ure-sp.gov';
+
+// Categorias específicas da educação paulista
+const CATEGORIES = [
+    'Matrícula e Transferência',
+    'Documentação Escolar (Histórico, Declarações)',
+    'Credenciamento / Reconhecimento',
+    'Parecer Técnico-Pedagógico',
+    'Frequência e Aproveitamento',
+    'Designação de Profissionais',
+    'Licença e Afastamento',
+    'Convocação e Exoneração',
+    'Manutenção Predial',
+    'Reforma e Construção',
+    'Material Didático e Pedagógico',
+    'Bolsa-Aluno / Benefícios',
+    'Alimentação Escolar (PNAE/PDAE)',
+    'Transporte Escolar (Passe Livre)',
+    'Tecnologia Educacional (ProInfo)',
+    'Processo Licitatório / Contrato',
+    'Prestação de Contas',
+    'Denúncia / Representação',
+    'Solicitação de Informação',
+    'Outros',
+];
 
 const STATUS_MAP = {
-    received:    { label: 'Recebido',    color: '#1976d2' },
+    received:    { label: 'Recebido',    color: '#1565c0' },
     in_analysis: { label: 'Em Análise',  color: '#e65100' },
-    completed:   { label: 'Concluído',   color: '#2e7d32' },
+    completed:   { label: 'Concluído',   color: '#1b7a3d' },
 };
 const STATUS_ORDER = ['received', 'in_analysis', 'completed'];
+
+const PRIO_MAP = {
+    urgente: { label: 'Urgente', cls: 'urgente' },
+    normal:  { label: 'Normal',  cls: 'normal'  },
+    baixa:   { label: 'Baixa',   cls: 'baixa'   },
+};
 
 // ============================================================
 //  FIREBASE INIT
 // ============================================================
-let app, auth, db;
-let currentUser = null;
-let allProtocols = [];
-let unsubscribe = null;
-
+let auth, db, currentUser = null, allProtocols = [], unsubscribe = null;
 try {
-    app  = firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
     auth = firebase.auth();
     db   = firebase.firestore();
-} catch(e) {
-    console.warn('Firebase init:', e.message);
-}
+} catch(e) { console.warn('Firebase:', e.message); }
 
 // ============================================================
 //  HELPERS
@@ -1048,33 +1210,33 @@ function getDeptName(id) {
     const d = DEPARTMENTS.find(d => d.id === id);
     return d ? d.name : id;
 }
-
 function formatDate(ts) {
     if (!ts) return '—';
     const d = ts.toDate ? ts.toDate() : new Date(ts);
-    return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric' });
+    return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
 }
-
 function formatDateTime(ts) {
     if (!ts) return '—';
     const d = ts.toDate ? ts.toDate() : new Date(ts);
-    return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric' })
-         + ' ' + d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+    return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})
+         + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
-
-function statusBadge(status) {
-    const s = STATUS_MAP[status] || STATUS_MAP.received;
-    return `<span class="status-badge ${status}"><span class="dot"></span>${s.label}</span>`;
+function statusBadge(s) {
+    const m = STATUS_MAP[s] || STATUS_MAP.received;
+    return `<span class="status-badge ${s}"><span class="dot"></span>${m.label}</span>`;
 }
-
-function showToast(msg, type = 'info') {
+function prioBadge(p) {
+    const m = PRIO_MAP[p] || PRIO_MAP.normal;
+    return `<span class="prio-badge ${m.cls}">${m.label}</span>`;
+}
+function showToast(msg, type='info') {
     const c = document.getElementById('toast-container');
     const t = document.createElement('div');
     t.className = 'toast ' + type;
     t.textContent = msg;
     c.appendChild(t);
-    setTimeout(() => t.classList.add('hiding'), 3200);
-    setTimeout(() => t.remove(), 3600);
+    setTimeout(() => t.classList.add('hiding'), 3500);
+    setTimeout(() => t.remove(), 3900);
 }
 
 // ============================================================
@@ -1082,16 +1244,15 @@ function showToast(msg, type = 'info') {
 // ============================================================
 function populateLoginSelect() {
     const sel = document.getElementById('login-dept');
-    // Admin
-    const optAdmin = document.createElement('option');
-    optAdmin.value = 'registros';
-    optAdmin.textContent = '★ ' + ADMIN_DEPT.name + ' (Admin)';
-    sel.appendChild(optAdmin);
-    // Departments
+    const a = document.createElement('option');
+    a.value = 'registros'; a.textContent = '★ ' + ADMIN_DEPT.name;
+    sel.appendChild(a);
+    const hr = document.createElement('option');
+    hr.disabled = true; hr.textContent = '───── Setores Administrativos ─────';
+    sel.appendChild(hr);
     DEPARTMENTS.forEach(d => {
         const o = document.createElement('option');
-        o.value = d.id;
-        o.textContent = d.name;
+        o.value = d.id; o.textContent = d.name;
         sel.appendChild(o);
     });
 }
@@ -1101,46 +1262,39 @@ async function doLogin() {
     const pass   = document.getElementById('login-pass').value;
     const errEl  = document.getElementById('login-error');
     const btn    = document.getElementById('login-btn');
-
     errEl.textContent = '';
-    if (!deptId) { errEl.textContent = 'Selecione um departamento'; return; }
-    if (!pass)   { errEl.textContent = 'Digite a senha'; return; }
-
+    if (!deptId) { errEl.textContent = 'Selecione um setor'; return; }
+    if (!pass)   { errEl.textContent = 'Informe a senha'; return; }
     btn.innerHTML = '<span class="spinner"></span> Entrando...';
     btn.disabled = true;
-
-    const email = `${deptId}@${EMAIL_DOMAIN}`;
     try {
-        await auth.signInWithEmailAndPassword(email, pass);
+        await auth.signInWithEmailAndPassword(`${deptId}@${EMAIL_DOMAIN}`, pass);
     } catch(e) {
-        let msg = 'Erro ao autenticar';
-        if (e.code === 'auth/user-not-found') msg = 'Conta não encontrada. Crie no Firebase Console.';
-        if (e.code === 'auth/wrong-password')  msg = 'Senha incorreta';
-        if (e.code === 'auth/invalid-credential') msg = 'Credenciais inválidas';
-        if (e.code === 'auth/too-many-requests') msg = 'Muitas tentativas. Aguarde.';
-        errEl.textContent = msg;
+        const msgs = {
+            'auth/user-not-found': 'Conta não encontrada. Crie no Firebase Console.',
+            'auth/wrong-password': 'Senha incorreta.',
+            'auth/invalid-credential': 'Credenciais inválidas.',
+            'auth/too-many-requests': 'Muitas tentativas. Aguarde.',
+        };
+        errEl.textContent = msgs[e.code] || 'Erro ao autenticar.';
         btn.innerHTML = 'Entrar no Sistema';
         btn.disabled = false;
     }
 }
 
-function doLogout() {
-    if (unsubscribe) unsubscribe();
-    auth.signOut();
-}
+function doLogout() { if (unsubscribe) unsubscribe(); auth.signOut(); }
 
-function setupAuthListener() {
+function setupAuth() {
     if (!auth) return;
     auth.onAuthStateChanged(user => {
         if (user) {
             const key = user.email.split('@')[0];
             const acct = ACCOUNTS[key];
-            if (!acct) { showToast('Conta não autorizada', 'error'); auth.signOut(); return; }
+            if (!acct) { showToast('Conta não autorizada','error'); auth.signOut(); return; }
             currentUser = { uid: user.uid, email: user.email, ...acct };
             enterApp();
         } else {
-            currentUser = null;
-            allProtocols = [];
+            currentUser = null; allProtocols = [];
             if (unsubscribe) { unsubscribe(); unsubscribe = null; }
             document.getElementById('login-screen').classList.remove('hidden');
             document.getElementById('app-container').classList.remove('visible');
@@ -1154,150 +1308,129 @@ function setupAuthListener() {
 function enterApp() {
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('app-container').classList.add('visible');
-
-    document.getElementById('user-dept-badge').textContent = currentUser.short || 'REG';
+    document.getElementById('user-dept-badge').textContent = currentUser.short || 'ADM';
     document.getElementById('user-name-display').textContent = currentUser.name;
 
-    buildNavTabs();
+    buildNav();
     buildFormSelects();
     buildFilterDepts();
 
-    const firstTab = document.querySelector('.nav-tab');
-    if (firstTab) firstTab.click();
-
+    const first = document.querySelector('.nav-pill');
+    if (first) first.click();
     listenProtocols();
 }
 
-function buildNavTabs() {
-    const container = document.getElementById('nav-tabs');
-    container.innerHTML = '';
-
+function buildNav() {
+    const c = document.getElementById('nav-pills');
     if (currentUser.role === 'admin') {
-        container.innerHTML = `
-            <button class="nav-tab active" data-view="dashboard">
-                <span class="tab-icon">◧</span> Painel Geral
-            </button>
-            <button class="nav-tab" data-view="new">
-                <span class="tab-icon">✚</span> Novo Protocolo
-            </button>
-            <button class="nav-tab" data-view="all">
-                <span class="tab-icon">☰</span> Todos os Protocolos
-            </button>
+        c.innerHTML = `
+            <button class="nav-pill active" data-view="dashboard"><span class="pill-icon">◧</span> Painel</button>
+            <button class="nav-pill" data-view="new"><span class="pill-icon">✚</span> Novo Protocolo</button>
+            <button class="nav-pill" data-view="all"><span class="pill-icon">☰</span> Todos os Protocolos</button>
         `;
     } else {
-        container.innerHTML = `
-            <button class="nav-tab active" data-view="mine">
-                <span class="tab-icon">◉</span> Meus Protocolos
-            </button>
-            <button class="nav-tab" data-view="new">
-                <span class="tab-icon">✚</span> Novo Protocolo
-            </button>
+        c.innerHTML = `
+            <button class="nav-pill active" data-view="mine"><span class="pill-icon">◉</span> Minhas Solicitações</button>
+            <button class="nav-pill" data-view="new"><span class="pill-icon">✚</span> Novo Protocolo</button>
         `;
     }
-
-    container.querySelectorAll('.nav-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            container.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            switchView(tab.dataset.view);
+    c.querySelectorAll('.nav-pill').forEach(p => {
+        p.addEventListener('click', () => {
+            c.querySelectorAll('.nav-pill').forEach(x => x.classList.remove('active'));
+            p.classList.add('active');
+            switchView(p.dataset.view);
         });
     });
 }
 
-function switchView(viewId) {
+function switchView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    const el = document.getElementById('view-' + viewId);
+    const el = document.getElementById('view-' + id);
     if (el) el.classList.add('active');
-
-    if (viewId === 'dashboard') renderDashboard();
-    if (viewId === 'all') renderProtocolTable();
-    if (viewId === 'mine') renderMyTable();
+    if (id === 'dashboard') renderDashboard();
+    if (id === 'all') renderAllTable();
+    if (id === 'mine') renderMyTable();
 }
 
 // ============================================================
 //  FORM SELECTS
 // ============================================================
 function buildFormSelects() {
-    const originSel = document.getElementById('f-origin');
-    const destSel   = document.getElementById('f-dest');
-
-    originSel.innerHTML = '';
-    destSel.innerHTML   = '';
+    const oSel = document.getElementById('f-origin');
+    const dSel = document.getElementById('f-dest');
+    const cSel = document.getElementById('f-category');
+    oSel.innerHTML = ''; dSel.innerHTML = ''; cSel.innerHTML = '<option value="">Selecione...</option>';
 
     DEPARTMENTS.forEach(d => {
         const o = document.createElement('option');
         o.value = d.id; o.textContent = d.name;
         if (currentUser.role !== 'admin' && d.id === currentUser.id) o.selected = true;
-        originSel.appendChild(o);
+        oSel.appendChild(o);
     });
 
-    const optReg = document.createElement('option');
-    optReg.value = 'registros'; optReg.textContent = ADMIN_DEPT.name;
-    destSel.appendChild(optReg);
+    // Destination: all depts + admin
+    const optA = document.createElement('option');
+    optA.value = 'registros'; optA.textContent = ADMIN_DEPT.name;
+    dSel.appendChild(optA);
     DEPARTMENTS.forEach(d => {
         const o = document.createElement('option');
         o.value = d.id; o.textContent = d.name;
-        destSel.appendChild(o);
+        dSel.appendChild(o);
+    });
+
+    // Categories
+    CATEGORIES.forEach(cat => {
+        const o = document.createElement('option');
+        o.value = cat; o.textContent = cat;
+        cSel.appendChild(o);
     });
 }
 
 function buildFilterDepts() {
     const sel = document.getElementById('filter-dept');
-    sel.innerHTML = '<option value="">Todos os Deptos</option>';
+    sel.innerHTML = '<option value="">Todos Setores</option>';
     DEPARTMENTS.forEach(d => {
         const o = document.createElement('option');
         o.value = d.id; o.textContent = d.name;
         sel.appendChild(o);
     });
-    const oR = document.createElement('option');
-    oR.value = 'registros'; oR.textContent = ADMIN_DEPT.name;
-    sel.appendChild(oR);
 }
 
 // ============================================================
-//  FIRESTORE — LISTEN
+//  FIRESTORE
 // ============================================================
 function listenProtocols() {
-    if (!db) { showToast('Firebase não configurado', 'error'); return; }
+    if (!db) { showToast('Firebase não configurado','error'); return; }
     if (unsubscribe) unsubscribe();
-
-    unsubscribe = db.collection('protocols')
-        .orderBy('createdAt', 'desc')
+    unsubscribe = db.collection('protocols').orderBy('createdAt','desc')
         .onSnapshot(snap => {
             allProtocols = [];
             snap.forEach(doc => allProtocols.push({ id: doc.id, ...doc.data() }));
-            const activeTab = document.querySelector('.nav-tab.active');
-            if (activeTab) switchView(activeTab.dataset.view);
-        }, err => {
-            console.error('Listen error:', err);
-            showToast('Erro ao carregar dados', 'error');
-        });
+            const active = document.querySelector('.nav-pill.active');
+            if (active) switchView(active.dataset.view);
+        }, err => { console.error(err); showToast('Erro ao carregar dados','error'); });
 }
 
-// ============================================================
-//  FIRESTORE — CREATE
-// ============================================================
 async function createProtocol(e) {
     e.preventDefault();
     if (!db || !currentUser) return false;
-
     const btn = document.getElementById('submit-btn');
     btn.innerHTML = '<span class="spinner"></span> Registrando...';
     btn.disabled = true;
-
     try {
-        const number = await generateProtocolNumber();
-        const originId = document.getElementById('f-origin').value;
-        const destId   = document.getElementById('f-dest').value;
-
+        const number = await genNumber();
+        const oId = document.getElementById('f-origin').value;
+        const dId = document.getElementById('f-dest').value;
         await db.collection('protocols').add({
             number,
             createdAt:     firebase.firestore.FieldValue.serverTimestamp(),
             updatedAt:     firebase.firestore.FieldValue.serverTimestamp(),
-            originDept:    originId,
-            originName:    getDeptName(originId),
-            destDept:      destId,
-            destName:      getDeptName(destId),
+            originDept:    oId,
+            originName:    getDeptName(oId),
+            destDept:      dId,
+            destName:      getDeptName(dId),
+            category:      document.getElementById('f-category').value,
+            priority:      document.getElementById('f-priority').value,
             requester:     document.getElementById('f-requester').value.trim(),
             assignedTo:    document.getElementById('f-assigned').value.trim() || '',
             description:   document.getElementById('f-description').value.trim(),
@@ -1313,33 +1446,25 @@ async function createProtocol(e) {
                 note: 'Protocolo registrado no sistema'
             }]
         });
-
         document.getElementById('proto-result').textContent = number;
         document.getElementById('form-success').classList.add('visible');
         document.getElementById('protocol-form').style.display = 'none';
-        showToast('Protocolo ' + number + ' registrado com sucesso!', 'success');
-    } catch(err) {
-        console.error('Create error:', err);
-        showToast('Erro ao registrar protocolo', 'error');
-    }
-
+        showToast('Protocolo ' + number + ' registrado!','success');
+    } catch(err) { console.error(err); showToast('Erro ao registrar','error'); }
     btn.innerHTML = 'Registrar Protocolo';
     btn.disabled = false;
     return false;
 }
 
-async function generateProtocolNumber() {
-    const counterRef = db.collection('counters').doc('protocols');
-    const year = new Date().getFullYear();
-    return db.runTransaction(async (tx) => {
-        const doc = await tx.get(counterRef);
+async function genNumber() {
+    const ref = db.collection('counters').doc('protocols');
+    const yr = new Date().getFullYear();
+    return db.runTransaction(async tx => {
+        const doc = await tx.get(ref);
         let next = 1;
-        if (doc.exists) {
-            const data = doc.data();
-            next = (data.year === year) ? data.current + 1 : 1;
-        }
-        tx.set(counterRef, { current: next, year }, { merge: true });
-        return `REG-${year}/${String(next).padStart(6, '0')}`;
+        if (doc.exists) { const d = doc.data(); next = (d.year === yr) ? d.current + 1 : 1; }
+        tx.set(ref, { current: next, year: yr }, { merge: true });
+        return `URE-${yr}/${String(next).padStart(6,'0')}`;
     });
 }
 
@@ -1352,309 +1477,228 @@ function resetForm() {
     }
 }
 
-// ============================================================
-//  FIRESTORE — UPDATE (admin)
-// ============================================================
 async function updateProtocol() {
     if (!db || !currentUser || currentUser.role !== 'admin') return;
-
     const protoId = document.getElementById('modal-overlay').dataset.protoId;
     if (!protoId) return;
-
-    const newStatus = document.getElementById('m-status').value;
-    const assigned  = document.getElementById('m-assigned').value.trim();
-    const notes     = document.getElementById('m-notes').value.trim();
-    const proto     = allProtocols.find(p => p.id === protoId);
+    const proto = allProtocols.find(p => p.id === protoId);
     if (!proto) return;
-
+    const nSt = document.getElementById('m-status').value;
+    const nAs = document.getElementById('m-assigned').value.trim();
+    const nNo = document.getElementById('m-notes').value.trim();
     const updates = { updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
     let changed = false;
     const entry = { date: new Date().toISOString(), by: currentUser.id, byName: currentUser.name };
-
-    if (newStatus !== proto.status) {
-        updates.status = newStatus;
-        entry.status = newStatus;
-        entry.note = `Status alterado para "${STATUS_MAP[newStatus].label}"`;
+    if (nSt !== proto.status) {
+        updates.status = nSt; entry.status = nSt;
+        entry.note = `Status alterado para "${STATUS_MAP[nSt].label}"`; changed = true;
+    }
+    if (nAs !== (proto.assignedTo||'')) {
+        updates.assignedTo = nAs;
+        if (!changed) { entry.status = proto.status; entry.note = `Responsável: "${nAs}"`; }
         changed = true;
     }
-    if (assigned !== (proto.assignedTo || '')) {
-        updates.assignedTo = assigned;
-        if (!changed) { entry.status = proto.status; entry.note = `Responsável alterado para "${assigned}"`; }
+    if (nNo) {
+        updates.notes = nNo;
+        if (!changed) { entry.status = proto.status; entry.note = nNo; }
         changed = true;
     }
-    if (notes) {
-        updates.notes = notes;
-        if (!changed) { entry.status = proto.status; entry.note = notes; }
-        changed = true;
-    }
-
-    if (!changed) { showToast('Nenhuma alteração feita'); return; }
-
+    if (!changed) { showToast('Nenhuma alteração.'); return; }
     try {
         await db.collection('protocols').doc(protoId).update({
             ...updates,
             statusHistory: firebase.firestore.FieldValue.arrayUnion(entry)
         });
-        showToast('Protocolo atualizado com sucesso!', 'success');
+        showToast('Protocolo atualizado!','success');
         closeModal();
-    } catch(err) {
-        console.error('Update error:', err);
-        showToast('Erro ao atualizar protocolo', 'error');
-    }
+    } catch(err) { console.error(err); showToast('Erro ao atualizar','error'); }
 }
 
 // ============================================================
-//  RENDER — DASHBOARD
+//  RENDER DASHBOARD
 // ============================================================
 function renderDashboard() {
-    const total     = allProtocols.length;
-    const received  = allProtocols.filter(p => p.status === 'received').length;
-    const analysis  = allProtocols.filter(p => p.status === 'in_analysis').length;
-    const completed = allProtocols.filter(p => p.status === 'completed').length;
-
+    const t = allProtocols.length;
+    const r = allProtocols.filter(p=>p.status==='received').length;
+    const a = allProtocols.filter(p=>p.status==='in_analysis').length;
+    const c = allProtocols.filter(p=>p.status==='completed').length;
     document.getElementById('stats-grid').innerHTML = `
-        <div class="stat-card gold">
-            <div class="stat-icon">📋</div>
-            <div class="stat-label">Total de Protocolos</div>
-            <div class="stat-value">${total}</div>
+        <div class="stat-card">
+            <div class="stat-icon-box gold">📋</div>
+            <div class="stat-info"><div class="stat-label">Total</div><div class="stat-value">${t}</div></div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon">📥</div>
-            <div class="stat-label">Recebidos</div>
-            <div class="stat-value">${received}</div>
+            <div class="stat-icon-box blue">📥</div>
+            <div class="stat-info"><div class="stat-label">Recebidos</div><div class="stat-value">${r}</div></div>
         </div>
-        <div class="stat-card amber">
-            <div class="stat-icon">🔍</div>
-            <div class="stat-label">Em Análise</div>
-            <div class="stat-value">${analysis}</div>
+        <div class="stat-card">
+            <div class="stat-icon-box amber">🔍</div>
+            <div class="stat-info"><div class="stat-label">Em Análise</div><div class="stat-value">${a}</div></div>
         </div>
-        <div class="stat-card green">
-            <div class="stat-icon">✅</div>
-            <div class="stat-label">Concluídos</div>
-            <div class="stat-value">${completed}</div>
+        <div class="stat-card">
+            <div class="stat-icon-box green">✅</div>
+            <div class="stat-info"><div class="stat-label">Concluídos</div><div class="stat-value">${c}</div></div>
         </div>
     `;
-
-    const tbody = document.getElementById('dash-table-body');
-    const recent = allProtocols.slice(0, 10);
-    if (recent.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📋</div><p>Nenhum protocolo registrado ainda</p></div></td></tr>';
+    const tb = document.getElementById('dash-table-body');
+    const recent = allProtocols.slice(0,12);
+    if (!recent.length) {
+        tb.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><p>Nenhum protocolo registrado</p></div></td></tr>';
         return;
     }
-    tbody.innerHTML = recent.map(p => `
+    tb.innerHTML = recent.map(p => `
         <tr class="data-row" onclick="openDetail('${p.id}')">
-            <td><span class="protocol-num">${p.number}</span></td>
+            <td><span class="proto-num">${p.number}</span></td>
             <td>${formatDateTime(p.createdAt)}</td>
             <td>${p.originName}</td>
             <td>${p.destName}</td>
-            <td>${p.requester}</td>
+            <td>${p.category||'—'}</td>
+            <td>${prioBadge(p.priority)}</td>
             <td>${statusBadge(p.status)}</td>
         </tr>
     `).join('');
 }
 
 // ============================================================
-//  RENDER — ALL TABLE
+//  RENDER ALL TABLE
 // ============================================================
-function renderProtocolTable() {
-    const search = (document.getElementById('filter-search').value || '').toLowerCase();
+function renderAllTable() {
+    const search = (document.getElementById('filter-search').value||'').toLowerCase();
     const status = document.getElementById('filter-status').value;
     const dept   = document.getElementById('filter-dept').value;
-
-    let filtered = allProtocols;
-    if (search) {
-        filtered = filtered.filter(p =>
-            (p.number || '').toLowerCase().includes(search) ||
-            (p.requester || '').toLowerCase().includes(search) ||
-            (p.description || '').toLowerCase().includes(search)
-        );
-    }
-    if (status) filtered = filtered.filter(p => p.status === status);
-    if (dept)   filtered = filtered.filter(p => p.originDept === dept || p.destDept === dept);
-
-    const tbody = document.getElementById('all-table-body');
-    if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">🔍</div><p>Nenhum protocolo encontrado</p></div></td></tr>';
+    const prio   = document.getElementById('filter-priority').value;
+    let f = allProtocols;
+    if (search) f = f.filter(p => (p.number||'').toLowerCase().includes(search) || (p.requester||'').toLowerCase().includes(search) || (p.description||'').toLowerCase().includes(search));
+    if (status) f = f.filter(p => p.status === status);
+    if (dept)   f = f.filter(p => p.originDept === dept || p.destDept === dept);
+    if (prio)   f = f.filter(p => p.priority === prio);
+    const tb = document.getElementById('all-table-body');
+    if (!f.length) {
+        tb.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🔍</div><p>Nenhum resultado encontrado</p></div></td></tr>';
         return;
     }
-    tbody.innerHTML = filtered.map(p => `
+    tb.innerHTML = f.map(p => `
         <tr class="data-row" onclick="openDetail('${p.id}')">
-            <td><span class="protocol-num">${p.number}</span></td>
+            <td><span class="proto-num">${p.number}</span></td>
             <td>${formatDateTime(p.createdAt)}</td>
             <td>${p.originName}</td>
             <td>${p.destName}</td>
+            <td>${p.category||'—'}</td>
             <td>${p.requester}</td>
-            <td>${p.assignedTo || '—'}</td>
+            <td>${prioBadge(p.priority)}</td>
             <td>${statusBadge(p.status)}</td>
         </tr>
     `).join('');
 }
 
 // ============================================================
-//  RENDER — MY TABLE
+//  RENDER MY TABLE
 // ============================================================
 function renderMyTable() {
-    const myProtos = allProtocols.filter(p => p.originDept === currentUser.id);
-
-    const total     = myProtos.length;
-    const received  = myProtos.filter(p => p.status === 'received').length;
-    const analysis  = myProtos.filter(p => p.status === 'in_analysis').length;
-    const completed = myProtos.filter(p => p.status === 'completed').length;
-
+    const my = allProtocols.filter(p => p.originDept === currentUser.id);
+    const t = my.length;
+    const r = my.filter(p=>p.status==='received').length;
+    const a = my.filter(p=>p.status==='in_analysis').length;
+    const c = my.filter(p=>p.status==='completed').length;
     document.getElementById('mine-stats').innerHTML = `
-        <div class="stat-card gold">
-            <div class="stat-icon">📋</div>
-            <div class="stat-label">Meus Protocolos</div>
-            <div class="stat-value">${total}</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">📥</div>
-            <div class="stat-label">Recebidos</div>
-            <div class="stat-value">${received}</div>
-        </div>
-        <div class="stat-card amber">
-            <div class="stat-icon">🔍</div>
-            <div class="stat-label">Em Análise</div>
-            <div class="stat-value">${analysis}</div>
-        </div>
-        <div class="stat-card green">
-            <div class="stat-icon">✅</div>
-            <div class="stat-label">Concluídos</div>
-            <div class="stat-value">${completed}</div>
-        </div>
+        <div class="stat-card"><div class="stat-icon-box gold">📋</div><div class="stat-info"><div class="stat-label">Minhas Solicitações</div><div class="stat-value">${t}</div></div></div>
+        <div class="stat-card"><div class="stat-icon-box blue">📥</div><div class="stat-info"><div class="stat-label">Recebidas</div><div class="stat-value">${r}</div></div></div>
+        <div class="stat-card"><div class="stat-icon-box amber">🔍</div><div class="stat-info"><div class="stat-label">Em Análise</div><div class="stat-value">${a}</div></div></div>
+        <div class="stat-card"><div class="stat-icon-box green">✅</div><div class="stat-info"><div class="stat-label">Concluídas</div><div class="stat-value">${c}</div></div></div>
     `;
-
-    const search = (document.getElementById('mine-search').value || '').toLowerCase();
+    const search = (document.getElementById('mine-search').value||'').toLowerCase();
     const status = document.getElementById('mine-status').value;
-
-    let filtered = myProtos;
-    if (search) filtered = filtered.filter(p => (p.number||'').toLowerCase().includes(search) || (p.requester||'').toLowerCase().includes(search));
-    if (status) filtered = filtered.filter(p => p.status === status);
-
-    const tbody = document.getElementById('mine-table-body');
-    if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📋</div><p>Nenhum protocolo encontrado</p></div></td></tr>';
+    let f = my;
+    if (search) f = f.filter(p => (p.number||'').toLowerCase().includes(search) || (p.requester||'').toLowerCase().includes(search));
+    if (status) f = f.filter(p => p.status === status);
+    const tb = document.getElementById('mine-table-body');
+    if (!f.length) {
+        tb.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📋</div><p>Nenhuma solicitação encontrada</p></div></td></tr>';
         return;
     }
-    tbody.innerHTML = filtered.map(p => `
+    tb.innerHTML = f.map(p => `
         <tr class="data-row" onclick="openDetail('${p.id}')">
-            <td><span class="protocol-num">${p.number}</span></td>
+            <td><span class="proto-num">${p.number}</span></td>
             <td>${formatDate(p.createdAt)}</td>
             <td>${p.destName}</td>
-            <td>${p.requester}</td>
+            <td>${p.category||'—'}</td>
+            <td>${prioBadge(p.priority)}</td>
             <td>${statusBadge(p.status)}</td>
         </tr>
     `).join('');
 }
 
 // ============================================================
-//  MODAL — DETAIL
+//  MODAL DETAIL
 // ============================================================
 function openDetail(protoId) {
     const proto = allProtocols.find(p => p.id === protoId);
     if (!proto) return;
-
-    const overlay = document.getElementById('modal-overlay');
-    overlay.dataset.protoId = protoId;
+    const ov = document.getElementById('modal-overlay');
+    ov.dataset.protoId = protoId;
 
     document.getElementById('modal-title').textContent = proto.number;
     document.getElementById('modal-date').textContent  = 'Registrado em ' + formatDateTime(proto.createdAt);
 
     // Stepper
-    const currentIdx = STATUS_ORDER.indexOf(proto.status);
-    let stepperHTML = '';
-    STATUS_ORDER.forEach((s, i) => {
-        let cls = '';
-        if (i < currentIdx) cls = 'done';
-        else if (i === currentIdx) cls = 'active';
-        if (i > 0) {
-            const lineCls = i <= currentIdx ? (i < currentIdx ? 'done' : 'active') : '';
-            stepperHTML += `<div class="step-line ${lineCls}"></div>`;
-        }
-        stepperHTML += `
-            <div class="step ${cls}">
-                <div class="step-circle">${i < currentIdx ? '✓' : i + 1}</div>
-                <span class="step-label">${STATUS_MAP[s].label}</span>
-            </div>
-        `;
+    const ci = STATUS_ORDER.indexOf(proto.status);
+    let sh = '';
+    STATUS_ORDER.forEach((s,i) => {
+        let cls = i < ci ? 'done' : (i === ci ? 'active' : '');
+        if (i > 0) sh += `<div class="step-connector ${i<ci?'done':(i===ci?'active':'')}"></div>`;
+        sh += `<div class="step-item ${cls}"><div class="step-circle">${i<ci?'✓':i+1}</div><span class="step-label">${STATUS_MAP[s].label}</span></div>`;
     });
-    document.getElementById('modal-stepper').innerHTML = stepperHTML;
+    document.getElementById('modal-stepper').innerHTML = sh;
 
     document.getElementById('modal-details').innerHTML = `
-        <div class="detail-field">
-            <label>Departamento de Origem</label>
-            <div class="value">${proto.originName}</div>
-        </div>
-        <div class="detail-field">
-            <label>Setor de Destino</label>
-            <div class="value">${proto.destName}</div>
-        </div>
-        <div class="detail-field">
-            <label>Solicitante</label>
-            <div class="value">${proto.requester}</div>
-        </div>
-        <div class="detail-field">
-            <label>Responsável</label>
-            <div class="value">${proto.assignedTo || 'Não atribuído'}</div>
-        </div>
-        <div class="detail-field">
-            <label>Status Atual</label>
-            <div class="value">${statusBadge(proto.status)}</div>
-        </div>
-        <div class="detail-field">
-            <label>Última Atualização</label>
-            <div class="value">${formatDateTime(proto.updatedAt)}</div>
-        </div>
+        <div class="detail-field"><label>Origem</label><div class="val">${proto.originName}</div></div>
+        <div class="detail-field"><label>Destino</label><div class="val">${proto.destName}</div></div>
+        <div class="detail-field"><label>Categoria</label><div class="val">${proto.category||'—'}</div></div>
+        <div class="detail-field"><label>Prioridade</label><div class="val">${prioBadge(proto.priority)}</div></div>
+        <div class="detail-field"><label>Solicitante</label><div class="val">${proto.requester}</div></div>
+        <div class="detail-field"><label>Responsável</label><div class="val">${proto.assignedTo||'Não atribuído'}</div></div>
+        <div class="detail-field"><label>Status</label><div class="val">${statusBadge(proto.status)}</div></div>
+        <div class="detail-field"><label>Atualização</label><div class="val">${formatDateTime(proto.updatedAt)}</div></div>
     `;
+    document.getElementById('modal-desc').textContent = proto.description || 'Sem descrição.';
 
-    document.getElementById('modal-desc').textContent = proto.description || 'Sem descrição';
-
-    const history = proto.statusHistory || [];
-    document.getElementById('modal-history').innerHTML = history.length > 0
-        ? history.slice().reverse().map(h => {
-            const sColor = STATUS_MAP[h.status] ? STATUS_MAP[h.status].color : '#999';
-            return `
-                <div class="history-item">
-                    <div class="history-dot" style="background:${sColor}"></div>
-                    <div class="history-info">
-                        <div class="action">${h.note || h.status}</div>
-                        <div class="meta">${h.byName || h.by} — ${formatDateTime(h.date)}</div>
-                    </div>
+    // History
+    const hist = proto.statusHistory || [];
+    document.getElementById('modal-history').innerHTML = hist.length
+        ? hist.slice().reverse().map(h => `
+            <div class="hist-item">
+                <div class="hist-dot" style="background:${STATUS_MAP[h.status]?STATUS_MAP[h.status].color:'#aaa'}"></div>
+                <div class="hist-info">
+                    <div class="hist-action">${h.note||h.status}</div>
+                    <div class="hist-meta">${h.byName||h.by} — ${formatDateTime(h.date)}</div>
                 </div>
-            `;
-        }).join('')
-        : '<p style="font-size:0.85rem;color:#999;padding:12px 0">Nenhum registro de movimentação</p>';
+            </div>
+        `).join('')
+        : '<p style="color:#aaa;font-size:0.85rem;padding:8px 0">Nenhuma movimentação registrada.</p>';
 
-    const adminFields = document.getElementById('admin-fields');
-    if (currentUser && currentUser.role === 'admin') {
-        adminFields.classList.add('visible');
+    // Admin
+    const ap = document.getElementById('admin-fields');
+    if (currentUser.role === 'admin') {
+        ap.classList.add('visible');
         document.getElementById('m-status').value = proto.status;
         document.getElementById('m-assigned').value = proto.assignedTo || '';
         document.getElementById('m-notes').value = proto.notes || '';
     } else {
-        adminFields.classList.remove('visible');
+        ap.classList.remove('visible');
     }
-
-    overlay.classList.add('visible');
+    ov.classList.add('visible');
 }
 
-function closeModal() {
-    document.getElementById('modal-overlay').classList.remove('visible');
-}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('visible'); }
 
 // ============================================================
 //  INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
     populateLoginSelect();
-    setupAuthListener();
-
-    document.getElementById('login-pass').addEventListener('keydown', e => {
-        if (e.key === 'Enter') doLogin();
-    });
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') closeModal();
-    });
+    setupAuth();
+    document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
+    document.addEventListener('keydown', e => { if (e.key==='Escape') closeModal(); });
 });
 </script>
 </body>
